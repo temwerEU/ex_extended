@@ -82,9 +82,8 @@ end, false, {help = _U('command_cardel'), validate = false, arguments = {
 }})
 
 ESX.RegisterCommand('setaccountmoney', 'developer', function(xPlayer, args, showError)
-	print(xPlayer)
-	print(args.playerId)
-	print(json.ecnode(args.playerId))
+	print(json.encode(xPlayer))
+	print(json.encode(args.playerId))
 	if args.playerId.getAccount(args.account) then
 		args.playerId.setAccountMoney(args.account, args.amount, "Government Grant")
 	else
