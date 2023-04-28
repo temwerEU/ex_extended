@@ -115,11 +115,6 @@ ESX.RegisterCommand('setaccountmoney', 'developer', function(xPlayer, args, show
 		}
 	}
 	--]]
-end
-
-PerformHttpRequest(Config.DiscordLogs['setaccountmoney'], function(err, text, headers) end, 'POST', json.encode({username = 'LOGS', embeds = embed}), { ['Content-Type'] = 'application/json' })
-
-
 end, true, {help = _U('command_setaccountmoney'), validate = true, arguments = {
 	{name = 'playerId', help = _U('commandgeneric_playerid'), type = 'player'},
 	{name = 'account', help = _U('command_giveaccountmoney_account'), type = 'string'},
