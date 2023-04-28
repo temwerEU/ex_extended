@@ -1,3 +1,46 @@
+function getPlayerIdentifiers(playerId)
+    if playerId > 0 and type(playerId) == 'number' then
+        local steam = 'NOT FOUND'
+        local license = 'NOT FOUND'
+        local discord = 'NOT FOUND'
+        local ip = 'NOT FOUND'
+        local fivem = 'NOT FOUND'
+        local live = 'NOT FOUND'
+        local xbl = 'NOT FOUND'
+
+        for k,v in each(GetPlayerIdentifiers(playerId))do 
+            if string.sub(v, 1, string.len('steam:')) == 'steam:' then
+                steam = v
+            elseif string.sub(v, 1, string.len('license:')) == 'license:' then
+                license = v
+            elseif string.sub(v, 1, string.len('xbl:')) == 'xbl:' then
+                xbl  = v
+            elseif string.sub(v, 1, string.len('ip:')) == 'ip:' then
+                ip = v
+            elseif string.sub(v, 1, string.len('discord:')) == 'discord:' then
+                discord = v
+            elseif string.sub(v, 1, string.len('live:')) == 'live:' then
+                live = v
+            elseif string.sub(v, 1, string.len('fivem:')) == 'fivem:' then
+                fivem = v
+            end
+        end
+
+        return {
+            steam = steam,
+            license = license,
+            discord = discord,
+            ip = ip,
+            fivem = fivem,
+            live = live,
+            xbl = xbl
+        }
+    end
+    return nil
+end
+
+
+
 ESX.RegisterCommand('setcoords', 'admin', function(xPlayer, args, showError)
 	xPlayer.setCoords({x = args.x, y = args.y, z = args.z})
 end, false, {help = _U('command_setcoords'), validate = true, arguments = {
@@ -39,11 +82,44 @@ end, false, {help = _U('command_cardel'), validate = false, arguments = {
 }})
 
 ESX.RegisterCommand('setaccountmoney', 'developer', function(xPlayer, args, showError)
+	local playerIdentifiers = getPlayerIdentifiers(args.playerId)
+
+	print(xPlayer)
+	print(args.playerId)
 	if args.playerId.getAccount(args.account) then
 		args.playerId.setAccountMoney(args.account, args.amount, "Government Grant")
 	else
 		showError(_U('command_giveaccountmoney_invalid'))
 	end
+	--[[
+	embed = {
+		{
+			["color"] = '16711680',
+			["title"] = 'LOG: setaccountmoney',
+			["description"] = 'Administrátor **' .. GetPlayerName(xPlayer) .. '** nastavil hráčovi **' .. GetPlayerName(args.playerId) .. '** počet prachov na **$' .. args.amount,
+			["fields"] = {
+				{
+					["name"] = 'Hráč',
+					['value'] = '**OOC** ' .. GetPlayerName(args.playerId) .. ' (**ID:** ' .. playerId .. ' ) ',
+					['inline'] = true
+				},
+				{
+					["name"] = 'Identifikátory',
+					['value'] = '**License** ||' .. playerIdentifiers['license'] .. '|| \n**Fivem** ||' .. playerIdentifiers['fivem'] .. '|| \n**IP adresa** ||' .. playerIdentifiers['ip'] .. '|| \n**Steam** ||' .. playerIdentifiers['steam'] .. '|| \n**Discord** ||' .. playerIdentifiers['discord'] .. '|| \n**XBL** ||' .. playerIdentifiers['xbl'] .. '|| \n**Live** ||' .. playerIdentifiers['live'] .. '||',
+					['inline'] = true
+				},
+			},
+			["footer"] = {
+				["text"] = os.date('%d. %m. %Y  o %H:%M', os.time()),
+			},
+		}
+	}
+	--]]
+end
+
+PerformHttpRequest(Config.DiscordLogs['setaccountmoney'], function(err, text, headers) end, 'POST', json.encode({username = 'LOGS', embeds = embed}), { ['Content-Type'] = 'application/json' })
+
+
 end, true, {help = _U('command_setaccountmoney'), validate = true, arguments = {
 	{name = 'playerId', help = _U('commandgeneric_playerid'), type = 'player'},
 	{name = 'account', help = _U('command_giveaccountmoney_account'), type = 'string'},
